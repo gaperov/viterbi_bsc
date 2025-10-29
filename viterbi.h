@@ -106,16 +106,13 @@ class ViterbiEncoder {
         ViterbiEncoder(const ViterbiCode& c) : code(c) {state = 0;}
 
         vector<int> encode(vector<int>& info, bool terminate) {
-            //cout << "r";
             vector<int> out;
-            //cout << "r";
-            out.reserve((info.size() + code.m) * (code.n));
-            //cout << "r";
+            out.reserve((info.size()) * (code.n));
 
             for (int t = 0; t < info.size(); t++) {
                 int u = 0;
                 u |= info[t];
-                //cout << u;
+    
                 int y = code.out_sym[state][u];
                 state = (code.next_state[state][u] & 3);
 
@@ -136,4 +133,78 @@ class ViterbiEncoder {
             return out;
         }
 };
+
+// Класс ViterbiDecoder — реализует алгоритм Витерби
+class ViterbiDecoder {
+    private:
+        const ViterbiCode& code;
+
+    public:
+        ViterbiDecoder(const ViterbiCode& c): code(c) {}
+
+        vector<int> decode(vector<int>& noisy, bool terminate) {
+            int T = noisy.size() / code.n;
+            int U = 1 << code.k;
+            int S = code.S;
+            int INF = 1000000;
+            
+            vector<int> cur(S, INF), nxt(S, INF);
+            vector<int> pred(T * S);
+            vector<int> inbit(T * S);
+
+            cur[0] = 0;
+
+            for (int t = 0; t < T; t++) {
+                fill(nxt.begin(), nxt.end(), INF);
+
+                int sym = 0;
+                for (int j = 0; j < code.n; j++) {
+                    sym |= noisy[t * code.n + j] << j;
+                }
+                cout << ' ' << sym << ' ';
+
+                for (int s = 0; s < S; s++) {
+                    if (cur[s] >= INF) continue;
+
+                    for (int u = 0; u < U; u++) {
+                        int ns = code.next_state[s][u] & 3;
+                        int y = code.out_sym[s][u];
+
+                        int bm = 0;
+                        int diff = y ^ sym;
+                        for (int j = 0; j < code.n; j++) {
+                            bm += (diff >> j) & 1;
+                        }
+
+                        int cand = cur[s] + bm;
+                        if (cand < nxt[ns]) {
+                            nxt[ns] = cand;
+                            pred[t * S + ns] = s;
+                            inbit[t * S + ns] = u;
+                        }
+                    }
+                }
+                cur.swap(nxt);
+            }
+            int fs = terminate ? 0 : min_element(cur.begin(), cur.end()) - cur.begin();
+
+            vector<int> u_rev;
+            u_rev.reserve(T * code.k);
+            int s = fs;
+            for (int t = T - 1; t >= 0; t--) {
+                int u = inbit[t * S + s];
+                u_rev.push_back(u & 1);
+                s = pred[t * S + s];
+            }
+            reverse(u_rev.begin(), u_rev.end());
+
+            if (terminate && code.m > 0) {
+                int tail = code.m * code.k;
+                u_rev.resize(u_rev.size() - tail);
+            }
+
+            return u_rev;
+        }
+};
+
 #endif

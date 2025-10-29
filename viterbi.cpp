@@ -14,7 +14,7 @@ int main() {
     ViterbiCode code = ViterbiCode::from_octal(1,2,3, oct);
 
     // значение перехода - значение выхода в кодере
-    cout << "значение перехода - значение выхода в кодере\n";
+    cout << "значение перехода - реверсивное значение выхода в кодере\n";
     for (int i = 0; i < 4; i++){
         for (int j = 0; j < 2; j++) {
             cout << std::bitset<3> (code.next_state[i][j]) << " - ";
@@ -23,11 +23,11 @@ int main() {
     }
 
     // Исходная информация
-    vector<int> info = {1, 0, 1, 1};
+    vector<int> info = {1, 0, 0, 1, 1, 0 , 1};
     bool terminate = true;
 
     cout << "Полученная информация\n";
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < info.size(); i++) {
         cout << info[i];
     }
 
@@ -38,6 +38,14 @@ int main() {
     for (int i = 0; i < coded.size(); i++) {
         cout << coded[i];
         if (i%2 == 1) { cout << ' ';}
+    }
+    cout << '\n';
+    ViterbiDecoder decoder(code);
+    vector<int> decoded = decoder.decode(coded, terminate);
+
+    cout << "\nДекодированное сообщение\n";
+    for (int i = 0; i < decoded.size(); i++) {
+        cout << decoded[i];
     }
     return 0;
 }
