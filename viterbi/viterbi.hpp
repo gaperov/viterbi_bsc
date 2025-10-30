@@ -1,12 +1,9 @@
 #ifndef VITERBI_H
 #define VITERBI_H
 
-#include <iostream>
 #include <vector>
 #include <string>
-#include <random>
-#include <iomanip>
-#include <algorithm>
+
 using namespace std;
 
 /*
