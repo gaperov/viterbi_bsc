@@ -12,7 +12,7 @@ using namespace std;
 /*
  *  Витерби-кодер и декодер (1/2, K=3), полиномы (5,7)
  *  Реализованы три класса:
- *  1. ViterbiCode   — описание сверточного кода
+ *  1. ViterbiCode   – описание сверточного кода
  *  2. ViterbiEncoder — кодер
  *  3. ViterbiDecoder — декодер
  */
@@ -161,7 +161,7 @@ class ViterbiDecoder {
                 for (int j = 0; j < code.n; j++) {
                     sym |= noisy[t * code.n + j] << j;
                 }
-                cout << ' ' << sym << ' ';
+                //cout << ' ' << sym << ' ';
 
                 for (int s = 0; s < S; s++) {
                     if (cur[s] >= INF) continue;
