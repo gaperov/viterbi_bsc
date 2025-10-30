@@ -23,7 +23,7 @@ build: $(OBJ)
 	@echo "--------------------"
 	@echo "Построение графика"
 	@echo "--------------------"
-	python3.9 BER/ber_plot.py
+	python3 BER/ber_plot.py
 
 test: $(OBJ_TEST)
 	$(CXX) $(CXXFLAGS) -o build_test $(OBJ_TEST)
