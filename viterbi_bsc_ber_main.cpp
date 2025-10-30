@@ -37,14 +37,11 @@ int main() {
     ViterbiEncoder encoder(code);
     vector<int> coded = encoder.encode(info, terminate);
 
-    // Прохождение через канал
+    // Подключаем random
     mt19937 rng(4321);
-    float p = 0.15;
-    vector<int> noisy = bsc(p, rng, coded);
 
     // Декодирование информации
     ViterbiDecoder decoder(code);
-    vector<int> decoded = decoder.decode(noisy, terminate);
 
     // ---------------------------------------------------
     // Построение csv-таблицы от множества вероятностей pp
